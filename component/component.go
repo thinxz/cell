@@ -8,6 +8,16 @@ import (
 	"strings"
 )
 
+// 器件接口定义
+// ---------- ---------
+type IComponent interface {
+	Name() string                    // 获取器件名称, 唯一标识符
+	GetStitch(no int) (Stitch, bool) // 获取器件针脚
+	Event(event string, no int)      // 器件发布事件
+	Calculate()                      // 触发对应器件对象计算
+	Describe() string                // 器件相关信息描述
+}
+
 // 器件定义
 // ---------- ---------
 type Component struct {
@@ -30,14 +40,21 @@ func (c *Component) Name() string {
 	return c.name
 }
 
+// 获取器件针脚
+// ---------- ----------
+func (c *Component) GetStitch(no int) (Stitch, bool) {
+	s, ok := c.sts[no]
+	return s, ok
+}
+
 // 初始化器件针脚, 及其关联器件针脚
 // ---------- ----------
-func (c *Component) AddStitch(no int, target Component, targetNo int) {
+func (c *Component) AddStitch(no int, target IComponent, targetNo int) {
 	s, ok := c.sts[no]
 	if !ok {
 		s = Stitch{
 			no:       no,
-			Relation: [] *Relation{},
+			Relation: []*Relation{},
 			Signal:   Signal{},
 		}
 	}
@@ -50,56 +67,22 @@ func (c *Component) AddStitch(no int, target Component, targetNo int) {
 	c.sts[no] = s
 }
 
-//// 信息传入接口 [被其他器件调用]
-//// ---------- ----------
-//// no      事件触发的针脚号
-//// data    传入该器件的信息内容
-//// ---------- ----------
-//func (c *Component) Write(no int, signal Signal) error {
-//	_, ok := c.sts[no]
-//	if !ok {
-//		return err.NewErr("针脚号错误, 已关闭或不存在")
-//	}
-//	return nil
-//}
-
-// 管理器接收到事件 -> 触发对应器件对象计算
+// 器件内部计算
+// ---------- ----------
+// 器件接收到事件, 触发对应器件对象计算
+// 根据不同器件, 有不同的计算规则
+// 计算完毕后根据属性发布相应事件
 // ---------- ----------
 func (c *Component) Calculate() {
-	fmt.Println(fmt.Sprintf("Component [%s] -> calculate ing .......... ......... ", c.name))
+	fmt.Println(fmt.Sprintf("IComponent [%s] -> not calculate ing .......... ......... ", c.name))
 }
 
-// 01 传递针脚数据
-// 02 触发关联器件事件 [传递触发的针脚号]
-// ---------- ---------- ----------
-func (c *Component) Transmission() {
-	// 计算完毕, 信息传递
-	fmt.Println(fmt.Sprintf("信息传递 ing ... -> Component [%s] ", c.name))
-	fmt.Println()
-	// 遍历针脚数据, 并传递针脚计算值
-	for _, v := range c.sts {
-		for i := 0; i < len(v.Relation); i++ {
-			// 器件 -> 关联其他器件针脚
-			no := v.Relation[i].No
-			// 01 传递针脚数据 [该器件计算的信号, 传递给关联的器件] [数据内联不用传输]
-			//err := v.Relation[i].Component.Write(no, v.Signal)
-			//if err != nil {
-			//	fmt.Println(fmt.Sprintf("%s:%d -> %s", v.Relation[i].Component.Name(), no, err.Error()))
-			//	//
-			//}
-
-			// 02 触发关联器件事件 [传递触发的针脚号]
-			v.Relation[i].Component.event("DataChange", no)
-		}
-	}
-}
-
-// 器件描述信息, 返回JSON格式描述
+// 器件发布事件
 // ---------- ----------
 // event 事件类型定义
 // no    事件触发的针脚号
 // ---------- ----------
-func (c *Component) event(event string, no int) {
+func (c *Component) Event(event string, no int) {
 	fmt.Println(fmt.Sprintf("接收事件, Component [%s:%d] Event [%s] ", c.name, no, event))
 
 	// 发布事件到事件管理器 -> [事件管理器根据器件唯一标识符查询器件, 并触发相联器件计算]

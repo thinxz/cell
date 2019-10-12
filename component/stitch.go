@@ -4,7 +4,7 @@ package component
 // ----------
 type Relation struct {
 	// 相联的器件
-	Component Component
+	Component IComponent
 	// 相联器件的针脚
 	No int
 }

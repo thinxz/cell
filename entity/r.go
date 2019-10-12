@@ -3,6 +3,7 @@ package entity
 
 import (
 	"../component"
+	"../evt"
 	"bytes"
 	"fmt"
 )
@@ -22,19 +23,18 @@ func (c *R) InitProperty(r float32) {
 	c.r = r
 }
 
-func (c *R) Calculate() {
+func (c *R) Calculate(event evt.Event) {
 	//fmt.Println(fmt.Sprintf("电阻 [%s] -> recalculate ing .......... ......... ", c.Name()))
 	fmt.Println(fmt.Sprintf("%s calculating ...", c.Name()))
 	fmt.Println()
-	c.calculate()
+	c.calculate(event)
 	fmt.Println()
 	fmt.Println(fmt.Sprintf("%s finish ", c.Name()))
 }
 
 // 电阻 - 计算
 // ----------
-func (c *R) calculate() {
-	// 计算根据器件属性值, 及计算规则, 计算针脚数据
+func (c *R) calculate(event evt.Event) {
 
 }
 

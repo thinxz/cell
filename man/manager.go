@@ -69,12 +69,14 @@ func (m *Manager) Start() {
 
 	// 循环处理事件
 	fmt.Println()
-	event := m.eventManager.Push()
-	// 获取器件对象
-	e := m.getEntity(event.Name)
-	// 重新计算
-	e.Calculate()
-	fmt.Println(e.Describe())
+	if event, ok := m.eventManager.Push(); ok {
+		// 获取器件对象
+		e := m.getEntity(event.Target)
+		// 重新计算
+		e.Calculate(event)
+	} else {
+		// 没有待处理事件, 暂停执行
+	}
 }
 
 func (m *Manager) addEntity(c component.IComponent) {

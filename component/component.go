@@ -13,9 +13,10 @@ import (
 type IComponent interface {
 	Name() string                    // 获取器件名称, 唯一标识符
 	GetStitch(no int) (Stitch, bool) // 获取器件针脚
-	Event(event string, no int)      // 器件发布事件
-	Calculate()                      // 触发对应器件对象计算
-	Describe() string                // 器件相关信息描述
+	Event(event, source string, sourceNo int,
+		target string, targetNo int) // 器件发布事件
+	Calculate(event evt.Event) // 触发对应器件对象计算
+	Describe() string          // 器件相关信息描述
 }
 
 // 器件定义
@@ -72,24 +73,29 @@ func (c *Component) AddStitch(no int, target IComponent, targetNo int) {
 // 器件接收到事件, 触发对应器件对象计算
 // 根据不同器件, 有不同的计算规则
 // 计算完毕后根据属性发布相应事件
+// no 接收器件, 对应针脚
+// sourceName 发布事件的器件名称
 // ---------- ----------
-func (c *Component) Calculate() {
+func (c *Component) Calculate(event evt.Event) {
 	fmt.Println(fmt.Sprintf("IComponent [%s] -> not calculate ing .......... ......... ", c.name))
 }
 
 // 器件发布事件
 // ---------- ----------
 // event 事件类型定义
+// sourceName 发布事件人
 // no    事件触发的针脚号
 // ---------- ----------
-func (c *Component) Event(event string, no int) {
-	fmt.Println(fmt.Sprintf("接收事件, Component [%s:%d] Event [%s] ", c.name, no, event))
+func (c *Component) Event(event, source string, sourceNo int, target string, targetNo int) {
+	fmt.Println(fmt.Sprintf("接收事件, Component [%s:%d] Event [%s] ", c.name, targetNo, event))
 
 	// 发布事件到事件管理器 -> [事件管理器根据器件唯一标识符查询器件, 并触发相联器件计算]
 	c.man.Put(evt.Event{
 		EventType: event,
-		Name:      c.name, // 接收事件人
-		No:        no,
+		Source:    source,   // 发布事件器件
+		SourceNo:  sourceNo, // 发布器件针脚
+		Target:    target,   // 接收事件器件
+		TargetNo:  targetNo, // 接收器件针脚
 	})
 }
 

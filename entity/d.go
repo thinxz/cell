@@ -3,6 +3,7 @@
 package entity
 
 import (
+	"../evt"
 	"bytes"
 	"fmt"
 )
@@ -29,23 +30,23 @@ func (c *D) InitProperty(v float32) {
 func (c *D) InitCalculate() {
 	fmt.Println(fmt.Sprintf("%s 加电自检 ...", c.Name()))
 	fmt.Println()
-	c.calculate()
+	c.calculate(evt.Event{})
 	fmt.Println()
 	fmt.Println(fmt.Sprintf("%s finish ", c.Name()))
 }
 
-func (c *D) Calculate() {
+func (c *D) Calculate(event evt.Event) {
 	//fmt.Println(fmt.Sprintf("电源 [%s] -> recalculate ing .......... ......... ", c.Name()))
 	fmt.Println(fmt.Sprintf("%s calculating ...", c.Name()))
 	fmt.Println()
-	c.calculate()
+	c.calculate(event)
 	fmt.Println()
 	fmt.Println(fmt.Sprintf("%s finish ", c.Name()))
 }
 
 // 电源 - 计算
 // ----------
-func (c *D) calculate() {
+func (c *D) calculate(event evt.Event) {
 	// 计算根据器件属性值, 及计算规则, 计算针脚数据
 
 	// 判断修改各个针脚数据, 并判断该针脚是否需要传输信息
@@ -60,7 +61,7 @@ func (c *D) calculate() {
 			if ts2, ok := s1.Relation[i].Component.GetStitch(s1.Relation[i].No); ok {
 				if ts1.V != ts2.Signal.V {
 					// 关联器件对应针脚信号不匹配配 -> 发布信号改变事件到对应的器件
-					s1.Relation[i].Component.Event("DataChange", s1.Relation[i].No)
+					c.Event("DataChange", c.Name(), 1, s1.Relation[i].Component.Name(), s1.Relation[i].No)
 				}
 			} else {
 				// 关联器件对应针脚已损坏, 或不存在 -> 删除
@@ -79,7 +80,7 @@ func (c *D) calculate() {
 			if ts2, ok := s2.Relation[i].Component.GetStitch(s2.Relation[i].No); ok {
 				if ts1.V != ts2.Signal.V {
 					// 关联器件对应针脚信号不匹配配 -> 发布信号改变事件到对应的器件
-					s2.Relation[i].Component.Event("DataChange", s2.Relation[i].No)
+					c.Event("DataChange", c.Name(), 2, s2.Relation[i].Component.Name(), s2.Relation[i].No)
 				}
 			} else {
 				// 关联器件对应针脚已损坏, 或不存在 -> 删除

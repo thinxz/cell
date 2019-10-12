@@ -5,8 +5,10 @@ import "../linked"
 // 事件定义
 type Event struct {
 	EventType string // 事件类型
-	Name      string // 接收器件名称
-	No        int    // 接收器件针脚
+	Source    string // 发布器件名称
+	SourceNo  int    // 发布器件针脚
+	Target    string // 接收器件名称
+	TargetNo  int    // 接收器件针脚
 }
 
 // 事件管理器 定义
@@ -28,11 +30,11 @@ func (e *EventManager) Put(event Event) {
 }
 
 // 处理事件
-func (e *EventManager) Push() *Event {
+func (e *EventManager) Push() (Event, bool) {
 	c, ok := e.events.Push().(Event)
 	if ok {
-		return &c
+		return c, true
 	} else {
-		return nil
+		return Event{}, false
 	}
 }

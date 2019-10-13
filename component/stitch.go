@@ -1,7 +1,5 @@
 package component
 
-import "../evt"
-
 // 针脚相联的器件
 // ----------
 type Relation struct {
@@ -23,7 +21,7 @@ func (r *Relation) No() int {
 // ---------- ----------
 type Stitch struct {
 	// 针脚信息[该器件在该针脚上面的信号]
-	Signal evt.Signal
+	Signal *Signal
 	// 针脚序号
 	no int
 	// 相联的器件

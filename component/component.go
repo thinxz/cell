@@ -7,6 +7,9 @@ import (
 	"strings"
 )
 
+// 器件最大针脚数量
+const SMaxNum = 2
+
 // 器件接口定义
 // ---------- ---------
 type IComponent interface {
@@ -130,7 +133,7 @@ func (c *Component) AddStitch(no int, target IComponent, targetNo int) {
 		s = &Stitch{
 			no:       no,
 			Relation: make(map[string]*Relation),
-			Signal:   evt.Signal{},
+			Signal:   &Signal{},
 		}
 	}
 

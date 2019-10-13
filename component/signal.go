@@ -1,4 +1,4 @@
-package evt
+package component
 
 // 方向
 type Direction int
@@ -13,24 +13,24 @@ const (
 )
 
 type I struct {
-	Value     float32 // 电流值
+	Value     float64 // 电流值
 	Direction         // 电流方向
 }
 
 func (i I) Equal(other I) bool {
-	if i.Value == other.Value && i.Direction == other.Direction {
+	if i.Value == other.Value {
 		return true
 	}
 	return false
 }
 
 type V struct {
-	Value     float32 // 电压值
+	Value     float64 // 电压值
 	Direction         // 电压方向
 }
 
 func (v V) Equal(other V) bool {
-	if v.Value == other.Value && v.Direction == other.Direction {
+	if v.Value == other.Value {
 		return true
 	}
 	return false

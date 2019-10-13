@@ -4,6 +4,7 @@ package component
 import (
 	"../evt"
 	"fmt"
+	"time"
 )
 
 var (
@@ -74,15 +75,19 @@ func (e *EnManager) Run() {
 
 	// 循环处理事件
 	fmt.Println()
-	if event, ok := e.eventManager.Push(); ok {
-		// 获取器件对象
-		if c, ok := e.getEntity(event.Target); ok {
-			// 传输信息, 触发该器件重新计算
-			c.Transmission(event)
+	for {
+		if event, ok := e.eventManager.Push(); ok {
+			// 获取器件对象
+			if c, ok := e.getEntity(event.Target); ok {
+				// 传输信息, 触发该器件重新计算
+				c.Transmission(event)
+				fmt.Println()
+			}
+		} else {
+			// 没有待处理事件, 暂停执行
+			time.Sleep(5 * 1000000000) //等待1秒
 			fmt.Println()
 		}
-	} else {
-		// 没有待处理事件, 暂停执行
 	}
 }
 

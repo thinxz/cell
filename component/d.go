@@ -12,14 +12,14 @@ import (
 // ----------
 type D struct {
 	Component
-	v float32 // 电压, 恒压电源
+	v float64 // 电压, 恒压电源
 }
 
 // 初始化书信值
 // ----------
 // v 电压值 (单位 V)
 // ----------
-func (c *D) InitProperty(v float32) {
+func (c *D) InitProperty(v float64) {
 	c.v = v
 }
 
@@ -52,8 +52,8 @@ func (c *D) calculate(event evt.Event) {
 	if s1, ok := c.Stitch(1); ok {
 		// 一号针脚 - 正极 -> 设置针脚数据
 		s1.Signal.V.Value = c.v
-		s1.Signal.V.Direction = evt.Forward
-		s1.Signal.I.Direction = evt.Forward
+		s1.Signal.V.Direction = Forward
+		s1.Signal.I.Direction = Forward
 
 		// 判断是否需要传输信号
 		for name, v := range s1.Relation {
@@ -80,9 +80,9 @@ func (c *D) calculate(event evt.Event) {
 	if s2, ok := c.Stitch(2); ok {
 		// 二号针脚 - 负极 -> 设置针脚数据
 		s2.Signal.V.Value = 0
-		s2.Signal.V.Direction = evt.Reverse
+		s2.Signal.V.Direction = Reverse
 		// s2.Signal.I.Value
-		s2.Signal.I.Direction = evt.Reverse
+		s2.Signal.I.Direction = Reverse
 
 		// 判断是否需要传输信号
 		for name, v := range s2.Relation {

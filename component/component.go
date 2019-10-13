@@ -65,6 +65,16 @@ func (c *Component) GetComponentStitch(name string, no int) (Stitch, bool) {
 	return Stitch{}, false
 }
 
+//// 获取器件中, 一个针脚中, 关联器件的关系
+//func (c *Component) GetStitchRelation(no int, name string) (*Relation, bool) {
+//	if s, ok := c.Stitch(no); ok {
+//		if relation, ok := s.Relation[name]; ok {
+//			return relation, ok
+//		}
+//	}
+//	return nil, false
+//}
+
 // 器件发布事件
 // ---------- ----------
 // event    事件类型
@@ -132,14 +142,14 @@ func (c *Component) AddStitch(no int, target IComponent, targetNo int) {
 	if !ok {
 		s = &Stitch{
 			no:       no,
-			Relation: make(map[string]*Relation),
-			Signal:   &Signal{},
+			relation: make(map[string]*Relation),
 		}
 	}
 
 	s.AddRelation(&Relation{
-		name: target.Name(),
-		no:   targetNo,
+		nameRelation: target.Name(),
+		noRelation:   targetNo,
+		signal:       &Signal{},
 	})
 
 	c.sts[no] = s

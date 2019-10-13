@@ -46,65 +46,40 @@ func (c *D) Transmission(event evt.Event) {
 // 电源 - 计算
 // ----------
 func (c *D) calculate(event evt.Event) {
-	// 计算根据器件属性值, 及计算规则, 计算针脚数据
+	// 01 定义针脚并获取该器件的针脚信息
+	s := c.CalculateInitStitch(1, 2)
+	one := s[0]
+	two := s[1]
 
-	// 判断修改各个针脚数据, 并判断该针脚是否需要传输信息
-	if s1, ok := c.Stitch(1); ok {
-		// 一号针脚 - 正极 -> 设置针脚数据
-		s1.Signal.V.Value = c.v
-		s1.Signal.V.Direction = Forward
-		s1.Signal.I.Direction = Forward
+	// 02 根据事件, 设置针脚信息
+	c.CalculateSetStitch(event.Source, one)
+	c.CalculateSetStitch(event.Source, two)
 
-		// 判断是否需要传输信号
-		for name, v := range s1.Relation {
-			// 关联器件对应针脚信号不匹配配 -> 发布信号改变事件到对应的器件
-			if t, ok := c.GetComponentStitch(v.Name(), v.No()); ok && (v.Name() == name || name == "") {
-				ev := false
-				if !s1.Signal.V.Equal(t.Signal.V) {
-					// 电压
-					ev = true
-				}
-				if !s1.Signal.I.Equal(t.Signal.I) {
-					// 电流
-					ev = true
-				}
-
-				// 发布事件
-				if ev {
-					c.Event("DataChange", c.Name(), 1, name, v.No())
-				}
-			}
+	// 03 根据器件属性值及计算规则, 计算针脚数据, 并设置自身针脚值
+	for _, v := range one.relation {
+		oneRelation, oneOwnerOk := one.GetRelation(v.nameRelation)
+		if oneOwnerOk {
+			// 一号针脚 - 正极 -> 设置针脚数据
+			//oneRelation.signal.V.Value = c.v
+			oneRelation.signal.V.Direction = Forward
+			oneRelation.signal.I.Direction = Forward
 		}
 	}
 
-	if s2, ok := c.Stitch(2); ok {
-		// 二号针脚 - 负极 -> 设置针脚数据
-		s2.Signal.V.Value = 0
-		s2.Signal.V.Direction = Reverse
-		// s2.Signal.I.Value
-		s2.Signal.I.Direction = Reverse
-
-		// 判断是否需要传输信号
-		for name, v := range s2.Relation {
-			// 关联器件对应针脚信号不匹配配 -> 发布信号改变事件到对应的器件
-			if t, ok := c.GetComponentStitch(v.Name(), v.No()); ok && v.Name() == name {
-				ev := false
-				if !s2.Signal.V.Equal(t.Signal.V) {
-					// 电压
-					ev = true
-				}
-				if !s2.Signal.I.Equal(t.Signal.I) {
-					// 电流
-					ev = true
-				}
-
-				// 发布事件
-				if ev {
-					c.Event("DataChange", c.Name(), 2, name, v.No())
-				}
-			}
+	for _, v := range two.relation {
+		twoRelation, oneOwnerOk := one.GetRelation(v.nameRelation)
+		if oneOwnerOk {
+			// 二号针脚 - 负极
+			twoRelation.signal.V.Value = 0
+			twoRelation.signal.V.Direction = Reverse
+			//twoRelation.signal.I.Value
+			twoRelation.signal.I.Direction = Reverse
 		}
 	}
+
+	// 04 传输针脚信号改变事件
+	c.CalculatePowerTransmissionStitch(one)
+	c.CalculatePowerTransmissionStitch(two)
 }
 
 func (c *D) Describe() string {

@@ -5,7 +5,6 @@ import (
 	"../evt"
 	"bytes"
 	"fmt"
-	"math"
 )
 
 // 电阻
@@ -47,35 +46,6 @@ func (c *R) calculate(event evt.Event) {
 	c.CalculateSetStitch(event.Source, two)
 
 	// 03 根据器件属性值及计算规则, 计算针脚数据, 并设置自身针脚值
-	if one != nil && two != nil {
-		oneRelation, oneOwnerOk := one.GetRelation(event.Source)
-		twoRelation, twoOwnerOk := two.GetRelation(event.Source)
-
-		c.v = math.Abs(oneRelation.signal.V.Value - twoRelation.signal.V.Value)
-		c.i = c.v / c.r
-		if other, ok := c.GetComponentStitchRelation(event.Source, event.SourceNo); ok {
-			if oneOwnerOk {
-				oneRelation.signal.V.Direction = other.signal.V.Direction * Invert
-				oneRelation.signal.I.Direction = other.signal.I.Direction * Invert
-				twoRelation.signal.V.Direction = other.signal.V.Direction
-				twoRelation.signal.I.Direction = other.signal.I.Direction
-			} else if twoOwnerOk {
-				twoRelation.signal.V.Direction = other.signal.V.Direction * Invert
-				twoRelation.signal.I.Direction = other.signal.V.Direction * Invert
-				oneRelation.signal.V.Direction = other.signal.V.Direction
-				oneRelation.signal.I.Direction = other.signal.I.Direction
-			} else {
-				// 错误
-			}
-
-			// 计算值
-			//oneRelation.signal.V.Value = c.v
-			//oneRelation.signal.I.Value = c.i
-			//
-			//twoRelation.signal.V.Value = c.v
-			//twoRelation.signal.I.Value = c.i
-		}
-	}
 
 	// 04 传输针脚信号改变事件
 	c.CalculateTransmissionStitch(one)

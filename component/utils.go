@@ -1,5 +1,7 @@
 package component
 
+import "fmt"
+
 // 获取需要的针脚
 func (c *Component) CalculateInitStitch(no ...int) []*Stitch {
 	s := [SMaxNum]*Stitch{}
@@ -20,27 +22,14 @@ func (c *Component) GetComponentStitchRelation(name string, no int) (Relation, b
 			return *v, ok
 		}
 	}
-	return Relation{
-		signal: &Signal{
-			V{},
-			I{},
-		},
-	}, false
+	return *NewRelation("", 0), false
 }
 
 func (c *Component) CalculateSetStitch(source string, s *Stitch) {
 	if ownerRelation, ok := s.relation[source]; ok {
 		// 查询关联器件
 		if other, ok := c.GetComponentStitchRelation(ownerRelation.nameRelation, ownerRelation.noRelation); ok {
-			if !ownerRelation.signal.V.Equal(other.signal.V) {
-				// 电压不相等
-				ownerRelation.signal.V.Value = other.signal.V.Value
-			}
-
-			if !ownerRelation.signal.I.Equal(other.signal.I) {
-				// 电流不相等
-				ownerRelation.signal.I.Value = other.signal.I.Value
-			}
+			fmt.Println(other)
 		}
 	}
 }
@@ -52,15 +41,8 @@ func (c *Component) CalculateTransmissionStitch(s *Stitch) {
 		if otherRelation, ok := c.GetComponentStitchRelation(ownerRelation.nameRelation, ownerRelation.noRelation); ok {
 			// 关联器件对应针脚信号不匹配配 -> 发布信号改变事件到对应的器件
 			ev := false
-			if !ownerRelation.signal.V.Equal(otherRelation.signal.V) {
-				// 电压
-				ev = true
-			}
-
-			if !ownerRelation.signal.I.Equal(otherRelation.signal.I) {
-				// 电流
-				ev = true
-			}
+			//
+			fmt.Println(otherRelation)
 			// 发布事件
 			if ev {
 				c.Event("DataChange", c.Name(), s.no, ownerRelation.nameRelation, ownerRelation.noRelation)
@@ -76,15 +58,7 @@ func (c *Component) CalculatePowerTransmissionStitch(s *Stitch) {
 		if otherRelation, ok := c.GetComponentStitchRelation(ownerRelation.nameRelation, ownerRelation.noRelation); ok {
 			// 关联器件对应针脚信号不匹配配 -> 发布信号改变事件到对应的器件
 			ev := false
-			if !ownerRelation.signal.V.PowerEqual(otherRelation.signal.V) {
-				// 电压
-				ev = true
-			}
-
-			if !ownerRelation.signal.I.PowerEqual(otherRelation.signal.I) {
-				// 电流
-				ev = true
-			}
+			fmt.Println(otherRelation)
 			// 发布事件
 			if ev {
 				c.Event("DataChange", c.Name(), s.no, ownerRelation.nameRelation, ownerRelation.noRelation)

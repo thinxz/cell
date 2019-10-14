@@ -11,6 +11,14 @@ type Relation struct {
 	noRelation int
 }
 
+func NewRelation(nameRelation string, noRelation int) *Relation {
+	return &Relation{
+		signal:       NewSignal(),
+		nameRelation: nameRelation,
+		noRelation:   noRelation,
+	}
+}
+
 //func (r *Relation) Name() string {
 //	return r.nameRelation
 //}
@@ -26,6 +34,13 @@ type Stitch struct {
 	no int
 	// 相联的器件
 	relation map[string]*Relation
+}
+
+func NewStitch(no int) *Stitch {
+	return &Stitch{
+		no:       no,
+		relation: make(map[string]*Relation),
+	}
 }
 
 func (s *Stitch) AddRelation(r *Relation) {
@@ -58,10 +73,5 @@ func (s *Stitch) GetRelation(target string) (*Relation, bool) {
 	}
 
 	// 悬空状态返回空数据
-	return &Relation{
-		signal: &Signal{
-			V{},
-			I{},
-		},
-	}, false
+	return NewRelation("", 0), false
 }

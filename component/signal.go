@@ -3,59 +3,30 @@ package component
 // 方向
 type Direction int
 
-// 源指向目标(对针脚, 从自身指向外部, 同向为正极)
+// 电荷量, 电量 : 物体所带电荷的量值 (库仑, C)
 // ---------- ----------
-// 直流电路中, 电流电压方向相同
+//
 // ---------- ----------
 const (
-	Forward Direction = 1  // 正方向 [正极 -> 负极]
-	Reverse Direction = -1 // 反方向
-	Invert            = -1 // 取反[相乘]
+	EC = 1.0 // 基本电荷
 )
 
-type I struct {
-	Value     float64 // 电流值
-	Direction         // 电流方向
+type ElectricCharge struct {
+	n int // 电荷量整数倍
 }
 
-func (i I) Equal(other I) bool {
-	if i.Value == other.Value && i.Direction == other.Direction*Invert {
-		return true
-	}
-	return false
+func (e *ElectricCharge) GetEC() float64 {
+	return float64(e.n) * EC
 }
 
-func (i I) PowerEqual(other I) bool {
-	if i.Value == other.Value && i.Direction == other.Direction*Invert {
-		return true
-	}
-	return false
-}
-
-type V struct {
-	Value     float64 // 电压值
-	Direction         // 电压方向
-}
-
-func (v V) Equal(other V) bool {
-	if v.Value == other.Value && v.Direction == other.Direction*Invert {
-		return true
-	}
-	return false
-}
-
-func (v V) PowerEqual(other V) bool {
-	if v.Value == other.Value && v.Direction == other.Direction {
-		return true
-	}
-	return false
-}
-
-// 针脚信号定义 [电信号]
-// 为 nil 为任意匹配值 (不参与计算)
+// 针脚信号 [电信号]
 // ---------- ----------
-// 正方向为
 type Signal struct {
-	V // 电压
-	I // 电流
+	ElectricCharge // 电荷
+}
+
+func NewSignal() *Signal {
+	return &Signal{
+		ElectricCharge: ElectricCharge{},
+	}
 }

@@ -140,71 +140,10 @@ func (c *Component) Init(name string, man *EnManager) {
 func (c *Component) AddStitch(no int, target IComponent, targetNo int) {
 	s, ok := c.sts[no]
 	if !ok {
-		s = &Stitch{
-			no:       no,
-			relation: make(map[string]*Relation),
-		}
+		s = NewStitch(no)
 	}
-
-	s.AddRelation(&Relation{
-		nameRelation: target.Name(),
-		noRelation:   targetNo,
-		signal:       &Signal{},
-	})
-
+	//
+	s.AddRelation(NewRelation(target.Name(), targetNo))
+	//
 	c.sts[no] = s
 }
-
-/********** ********** ********** ********** ********** ********** ********** ********** **********/
-
-//// 信息传入接口 [被其他器件调用]
-//// ---------- ----------
-//// no      事件触发的针脚号
-//// data    传入该器件的信息内容
-//// ---------- ----------
-//func (c *Component) Write(no int, signal Signal) error {
-//	_, ok := c.sts[no]
-//	if !ok {
-//		return err.NewErr("针脚号错误, 已关闭或不存在")
-//	}
-//	return nil
-//}
-
-//func (c *Component) Real(child interface{}) {
-//	ref := reflect.ValueOf(child)
-//	method := ref.MethodByName("Calculate")
-//	if method.IsValid() {
-//		// 执行方法
-//		v := method.Call(make([]reflect.Value, 0))
-//		fmt.Print(v)
-//	} else {
-//		// 错误处理
-//	}
-//}
-
-//// 01 传递针脚数据
-//// 02 触发关联器件事件 [传递触发的针脚号]
-//// ---------- ---------- ----------
-//func (c *Component) Transmission() {
-//	// 计算完毕, 信息传递
-//	fmt.Println(fmt.Sprintf("信息传递 ing ... -> Component [%s] ", c.name))
-//	fmt.Println()
-//	// 遍历针脚数据, 并传递针脚计算值
-//	for _, v := range c.sts {
-//		if v.Transmission {
-//			for i := 0; i < len(v.Relation); i++ {
-//				// 器件 -> 关联其他器件针脚
-//				no := v.Relation[i].No
-//				// 01 传递针脚数据 [该器件计算的信号, 传递给关联的器件] [数据内联不用传输]
-//				//err := v.Relation[i].Component.Write(no, v.Signal)
-//				//if err != nil {
-//				//	fmt.Println(fmt.Sprintf("%s:%d -> %s", v.Relation[i].Component.Name(), no, err.Error()))
-//				//	//
-//				//}
-//
-//				// 02 触发关联器件事件 [传递触发的针脚号]
-//				v.Relation[i].Component.event("DataChange", no)
-//			}
-//		}
-//	}
-//}

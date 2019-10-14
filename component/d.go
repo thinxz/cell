@@ -56,26 +56,6 @@ func (c *D) calculate(event evt.Event) {
 	c.CalculateSetStitch(event.Source, two)
 
 	// 03 根据器件属性值及计算规则, 计算针脚数据, 并设置自身针脚值
-	for _, v := range one.relation {
-		oneRelation, oneOwnerOk := one.GetRelation(v.nameRelation)
-		if oneOwnerOk {
-			// 一号针脚 - 正极 -> 设置针脚数据
-			//oneRelation.signal.V.Value = c.v
-			oneRelation.signal.V.Direction = Forward
-			oneRelation.signal.I.Direction = Forward
-		}
-	}
-
-	for _, v := range two.relation {
-		twoRelation, oneOwnerOk := one.GetRelation(v.nameRelation)
-		if oneOwnerOk {
-			// 二号针脚 - 负极
-			twoRelation.signal.V.Value = 0
-			twoRelation.signal.V.Direction = Reverse
-			//twoRelation.signal.I.Value
-			twoRelation.signal.I.Direction = Reverse
-		}
-	}
 
 	// 04 传输针脚信号改变事件
 	c.CalculatePowerTransmissionStitch(one)

@@ -65,16 +65,6 @@ func (c *Component) GetComponentStitch(name string, no int) (Stitch, bool) {
 	return Stitch{}, false
 }
 
-//// 获取器件中, 一个针脚中, 关联器件的关系
-//func (c *Component) GetStitchRelation(no int, name string) (*Relation, bool) {
-//	if s, ok := c.Stitch(no); ok {
-//		if relation, ok := s.Relation[name]; ok {
-//			return relation, ok
-//		}
-//	}
-//	return nil, false
-//}
-
 // 器件发布事件
 // ---------- ----------
 // event    事件类型

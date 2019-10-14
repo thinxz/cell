@@ -19,14 +19,6 @@ func NewRelation(nameRelation string, noRelation int) *Relation {
 	}
 }
 
-//func (r *Relation) Name() string {
-//	return r.nameRelation
-//}
-//
-//func (r *Relation) No() int {
-//	return r.noRelation
-//}
-
 // 针脚定义
 // ---------- ----------
 type Stitch struct {

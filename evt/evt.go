@@ -9,6 +9,7 @@ type Event struct {
 	SourceNo  int    // 发布器件针脚
 	Target    string // 接收器件名称
 	TargetNo  int    // 接收器件针脚
+	Data      string // 事件数据
 }
 
 // 事件管理器 定义

@@ -36,20 +36,13 @@ func (c *R) Transmission(event evt.Event) {
 // 电阻 - 计算
 // ----------
 func (c *R) calculate(event evt.Event) {
-	// 01 定义针脚并获取该器件的针脚信息
-	s := c.CalculateInitStitch(1, 2)
-	one := s[0]
-	two := s[1]
+	// 触发计算 -> 根据电荷量计算电流
+	e := ElectricCharge{}
+	e.ByJson(event.Data)
 
-	// 02 根据事件, 设置针脚信息
-	c.CalculateSetStitch(event.Source, one)
-	c.CalculateSetStitch(event.Source, two)
-
-	// 03 根据器件属性值及计算规则, 计算针脚数据, 并设置自身针脚值
-
-	// 04 传输针脚信号改变事件
-	c.CalculateTransmissionStitch(one)
-	c.CalculateTransmissionStitch(two)
+	// 计算电流 、电压
+	c.i = e.GetEC() / e.T
+	c.v = c.i * c.r
 }
 
 func (c *R) Describe() string {
